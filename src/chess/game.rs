@@ -66,7 +66,6 @@ impl Game {
 
                 print!("\x1B[2J\x1B[1;1H");
                 self.position.print(highlighted_squares);
-
                 std::thread::sleep(Duration::from_millis(delay));
 
                 continue;
@@ -179,21 +178,21 @@ impl Game {
             }
         }
 
-        print!("\x1B[2J\x1B[1;1H");
-        self.position.print(0);
+        //print!("\x1B[2J\x1B[1;1H");
+        //self.position.print(0);
         let result = self.position.result.as_ref().unwrap();
-        match *result {
-            GameResult::Checkmate(color) => if color == WHITE {
-                println!("WHITE won by checkmate");
-            } else {
-                println!("BLACK won by checkmate");
-            }
-            GameResult::Stalemate => println!("Draw by stalemate"),
-            GameResult::FiftyMoveRule => println!("Draw by fifty move rule"),
-            GameResult::ThreefoldRepetition => println!("Draw by threefold repetition"),
-            GameResult::InsufficientMaterial => println!("Draw by insufficient material"),
-            
-        }
+        //match *result {
+        //    GameResult::Checkmate(color) => if color == WHITE {
+        //        println!("WHITE won by checkmate");
+        //    } else {
+        //        println!("BLACK won by checkmate");
+        //    }
+        //    GameResult::Stalemate => println!("Draw by stalemate"),
+        //    GameResult::FiftyMoveRule => println!("Draw by fifty move rule"),
+        //    GameResult::ThreefoldRepetition => println!("Draw by threefold repetition"),
+        //    GameResult::InsufficientMaterial => println!("Draw by insufficient material"),
+
+        //}
 
         *result
     }

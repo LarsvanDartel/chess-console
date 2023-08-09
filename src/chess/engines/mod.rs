@@ -1,5 +1,8 @@
+pub mod eval;
+
 pub mod random;
 pub mod capture;
+pub mod pure_minimax;
 
 pub use random::RandomEngine;
 pub use capture::CaptureEngine;

@@ -27,16 +27,15 @@ pub struct UndoInfo {
     pub epsq: Square,
     pub halfmove_clock: usize,
     pub hash: u64,
-    pub m: Move,
 }
 
 impl UndoInfo {
     pub const fn new() -> Self {
-        UndoInfo { entry: 0, captured: PIECE_NONE, epsq: SQUARE_NONE, halfmove_clock: 0, hash: 0, m: 0 }
+        UndoInfo { entry: 0, captured: PIECE_NONE, epsq: SQUARE_NONE, halfmove_clock: 0, hash: 0 }
     }
 
     pub const fn next(prev: &Self) -> Self {
-        UndoInfo { entry: prev.entry, captured: PIECE_NONE, epsq: SQUARE_NONE, halfmove_clock: 0, hash: 0, m: 0 }
+        UndoInfo { entry: prev.entry, captured: PIECE_NONE, epsq: SQUARE_NONE, halfmove_clock: 0, hash: 0 }
     }
 }
 
@@ -63,7 +62,7 @@ pub struct Position {
     pub halfmove_clock: usize,
     pub fullmove_number: usize,
     pub hash: u64,
-    pub history: [UndoInfo; 1024],
+    pub history: [UndoInfo; 2048],
     pub checkers: Bitboard,
     pub in_check: bool,
     pub pinned: Bitboard,
@@ -81,7 +80,7 @@ impl Position {
             halfmove_clock: 0,
             fullmove_number: 0,
             hash: 0,
-            history: [UNDO; 1024],
+            history: [UNDO; 2048],
             checkers: 0,
             in_check: false,
             pinned: 0,
@@ -256,7 +255,6 @@ impl Position {
 
     pub fn make_move<const COLOR: Color>(&mut self, m: Move) {
         self.turn = self.turn ^ 1;
-        self.history[self.game_ply].m = m;
         self.game_ply += 1;
         self.halfmove_clock += 1;
         if COLOR == BLACK { self.fullmove_number += 1; }
