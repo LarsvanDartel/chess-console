@@ -1,8 +1,6 @@
-mod types;
+pub mod types;
 mod tables;
-mod position;
-mod game;
-mod perft;
-
-pub use game::Game;
-pub use perft::*;
+pub mod position;
+pub mod game;
+pub mod perft;
+pub mod engines;
