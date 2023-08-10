@@ -1,5 +1,7 @@
 pub mod material;
 
+pub use material::MaterialEval;
+
 use crate::chess::position::Position;
 
 pub trait Eval {

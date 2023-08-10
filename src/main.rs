@@ -3,7 +3,7 @@
 mod chess;
 use chess::engines::RandomEngine;
 use chess::engines::eval::material::MaterialEval;
-use chess::engines::pure_minimax::MiniMaxEngine;
+use chess::engines::eval::MaterialEval;
 use chess::game::Game;
 use chess::position::GameResult;
 use chess::types::{BLACK, WHITE};
