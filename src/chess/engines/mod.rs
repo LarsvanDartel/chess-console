@@ -4,19 +4,27 @@ pub mod random;
 pub mod capture;
 pub mod pure_minimax;
 pub mod pruning;
+pub mod ordering;
+
+use self::eval::{PositionEval, MoveEval};
 
 pub use random::RandomEngine;
 pub use capture::CaptureEngine;
 pub use pure_minimax::MiniMaxEngine;
 pub use pruning::PruningEngine;
+pub use ordering::OrderingEngine;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use super::types::Move;
+use super::types::{Move, Color};
 use super::position::Position;
 
 pub trait Engine {
-    fn best_move(&mut self, p: &mut Position) -> Move;
+    fn new<const US: Color, const THEM: Color>() -> Self;
+    fn best_move<
+        const US: Color, const THEM: Color, const DEPTH: usize,
+        PE: PositionEval, ME: MoveEval
+    >(&mut self, p: &mut Position) -> Move;
 }
 
 pub struct PRNG {
@@ -30,7 +38,7 @@ impl PRNG {
         PRNG { seed: seed as u64 }
     }
 
-    pub fn new_seeded(seed: u64) -> Self {
+    pub const fn new_seeded(seed: u64) -> Self {
         PRNG { seed }
     }
 

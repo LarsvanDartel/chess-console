@@ -4,21 +4,15 @@ use crate::chess::types::Move;
 use crate::chess::types::Color;
 
 use super::Engine;
-use super::eval::PositionEval;
+use super::eval::{PositionEval, MoveEval};
 
-pub struct MiniMaxEngine<const US: Color, const THEM: Color, const DEPTH: usize, E: PositionEval> {
-    eval: E
-}
+pub struct MiniMaxEngine;
 
-impl<const US: Color, const THEM: Color, const DEPTH: usize, E: PositionEval> MiniMaxEngine<US, THEM, DEPTH, E> {
-    pub fn new() -> Self {
-        MiniMaxEngine::<US, THEM, DEPTH, E> { eval: E::new() }
-    }
+impl MiniMaxEngine {
+    fn search<const US: Color, const THEM: Color, PE: PositionEval>(p: &mut Position, depth: usize) -> i32 {
+        let moves = p.generate_moves::<US, THEM>();
 
-    fn search<const U: Color, const T: Color>(&self, p: &mut Position, depth: usize) -> i32 {
-        let moves = p.generate_moves::<U, T>();
-
-        if depth == 0 { return self.eval.eval(p) }
+        if depth == 0 { return PE::eval::<US, THEM>(p); }
 
         if p.result.is_some() {
             return match p.result.unwrap() {
@@ -29,31 +23,37 @@ impl<const US: Color, const THEM: Color, const DEPTH: usize, E: PositionEval> Mi
 
         let mut best = i32::MIN;
         for i in 0..moves.size {
-            p.make_move::<U>(moves[i]);
-
-            let score = -self.search::<T, U>(p, depth - 1);
-
+            p.make_move::<US>(moves[i]);
+            let score = -Self::search::<THEM, US, PE>(p, depth - 1);
             best = best.max(score);
 
-            p.undo_move::<U>(moves[i]);
+            p.undo_move::<US>(moves[i]);
         }
 
         best
     }
 }
 
-impl<const US: Color, const THEM: Color, const DEPTH: usize, E: PositionEval> Engine for MiniMaxEngine<US, THEM, DEPTH, E> {
-    fn best_move(&mut self, p: &mut Position) -> Move {
+impl Engine for MiniMaxEngine {
+    fn new<const US: Color, const THEM: Color>() -> Self {
+        MiniMaxEngine
+    }
+    fn best_move<
+            const US: Color, const THEM: Color, const DEPTH: usize,
+            PE: PositionEval, ME: MoveEval
+        >(&mut self, p: &mut Position) -> Move {
         assert!(p.turn == US);
 
         let moves = p.generate_moves::<US, THEM>();
+
+        if moves.size == 0 { return 0; }
 
         let mut best_score = i32::MIN;
         let mut best_move = moves[0];
         for i in 0..moves.size {
             p.make_move::<US>(moves[i]);
 
-            let score = -self.search::<THEM, US>(p, DEPTH);
+            let score = -Self::search::<THEM, US, PE>(p, DEPTH);
 
             if score > best_score {
                 best_score = score;

@@ -4,25 +4,30 @@ use crate::chess::types::Color;
 
 use super::Engine;
 use super::PRNG;
+use super::eval::MoveEval;
+use super::eval::PositionEval;
 
-pub struct RandomEngine<const US: Color, const THEM: Color> {
+
+pub struct RandomEngine {
     rng: PRNG
 }
 
-impl<const US: Color, const THEM: Color> RandomEngine<US, THEM> {
-    pub fn new() -> Self {
-        RandomEngine::<US, THEM> { rng: PRNG::new() }
+impl Engine for RandomEngine {
+    fn new<const US: Color, const THEM: Color>() -> Self {
+        RandomEngine { rng: PRNG::new() }
     }
-}
 
-impl<const US: Color, const THEM: Color> Engine for RandomEngine<US, THEM> {
-    fn best_move(&mut self, p: &mut Position) -> Move {
+    fn best_move<
+            const US: Color, const THEM: Color, const DEPTH: usize,
+            PE: PositionEval, ME: MoveEval
+        >(&mut self, p: &mut Position) -> Move {
         assert!(p.turn == US);
-
         let moves = p.generate_moves::<US, THEM>();
 
-        let random_index = self.rng.rand_range(0, moves.size);
+        if moves.size == 0 { return 0; }
 
-        moves[random_index]
+        let rand_index = self.rng.rand_range(0, moves.size);
+
+        moves[rand_index]
     }
 }

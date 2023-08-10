@@ -5,31 +5,33 @@ use crate::chess::types::move_is_capture;
 
 use super::Engine;
 use super::PRNG;
+use super::eval::MoveEval;
+use super::eval::PositionEval;
 
-pub struct CaptureEngine<const US: Color, const THEM: Color> {
+pub struct CaptureEngine {
     rng: PRNG
 }
 
-impl<const US: Color, const THEM: Color> CaptureEngine<US, THEM> {
-    pub fn new() -> Self {
-        CaptureEngine::<US, THEM> { rng: PRNG::new() }
+impl Engine for CaptureEngine {
+    fn new<const US: Color, const THEM: Color>() -> Self {
+        CaptureEngine { rng: PRNG::new() }
     }
-}
 
-impl<const US: Color, const THEM: Color> Engine for CaptureEngine<US, THEM> {
-    fn best_move(&mut self, p: &mut Position) -> Move {
+    fn best_move<
+            const US: Color, const THEM: Color, const DEPTH: usize,
+            PE: PositionEval, ME: MoveEval
+        >(&mut self, p: &mut Position) -> Move {
         assert!(p.turn == US);
-
         let moves = p.generate_moves::<US, THEM>();
 
+        if moves.size == 0 { return 0; }
+
         for i in 0..moves.size {
-            if move_is_capture(moves[i]) {
-                return moves[i];
-            }
+            if move_is_capture(moves[i]) { return moves[i]; }
         }
 
-        let random_index = self.rng.rand_range(0, moves.size);
+        let rand_index = self.rng.rand_range(0, moves.size);
 
-        moves[random_index]
+        moves[rand_index]
     }
 }
