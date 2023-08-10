@@ -2,7 +2,7 @@ use crate::chess::types::{N_PIECE_TYPES, sparse_count_ones};
 use crate::chess::position::Position;
 use crate::chess::position::GameResult::Checkmate;
 
-use super::Eval;
+use super::PositionEval;
 
 const PIECE_TYPE_VALUE: [i32; N_PIECE_TYPES] = [
     0, // KING
@@ -15,7 +15,7 @@ const PIECE_TYPE_VALUE: [i32; N_PIECE_TYPES] = [
 
 pub struct MaterialEval;
 
-impl Eval for MaterialEval {
+impl PositionEval for MaterialEval {
     fn new() -> Self {
         MaterialEval {}
     }

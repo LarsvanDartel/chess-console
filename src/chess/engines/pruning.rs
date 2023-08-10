@@ -4,13 +4,13 @@ use crate::chess::types::Move;
 use crate::chess::types::Color;
 
 use super::Engine;
-use super::eval::Eval;
+use super::eval::PositionEval;
 
-pub struct PruningEngine<const US: Color, const THEM: Color, const DEPTH: usize, E: Eval> {
+pub struct PruningEngine<const US: Color, const THEM: Color, const DEPTH: usize, E: PositionEval> {
     eval: E
 }
 
-impl<const US: Color, const THEM: Color, const DEPTH: usize, E: Eval> PruningEngine<US, THEM, DEPTH, E> {
+impl<const US: Color, const THEM: Color, const DEPTH: usize, E: PositionEval> PruningEngine<US, THEM, DEPTH, E> {
     pub fn new() -> Self {
         PruningEngine::<US, THEM, DEPTH, E> { eval: E::new() }
     }
@@ -44,7 +44,7 @@ impl<const US: Color, const THEM: Color, const DEPTH: usize, E: Eval> PruningEng
     }
 }
 
-impl<const US: Color, const THEM: Color, const DEPTH: usize, E: Eval> Engine for PruningEngine<US, THEM, DEPTH, E> {
+impl<const US: Color, const THEM: Color, const DEPTH: usize, E: PositionEval> Engine for PruningEngine<US, THEM, DEPTH, E> {
     fn best_move(&mut self, p: &mut Position) -> Move {
         assert!(p.turn == US);
 
