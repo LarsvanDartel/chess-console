@@ -1,8 +1,9 @@
 #![allow(dead_code)]
 
 mod chess;
+
 use chess::engines::RandomEngine;
-use chess::engines::eval::material::MaterialEval;
+use chess::engines::PruningEngine;
 use chess::engines::eval::MaterialEval;
 use chess::game::Game;
 use chess::position::GameResult;
@@ -15,7 +16,7 @@ fn main() {
 
     for _ in 0..100 {
         let mut game = Game::new(
-            Some(Box::new(MiniMaxEngine::<BLACK, WHITE, 4, MaterialEval>::new())),
+            Some(Box::new(PruningEngine::<WHITE, BLACK, 3, MaterialEval>::new())),
             Some(Box::new(RandomEngine::<BLACK, WHITE>::new())),
         );
         match game.start(0) {
