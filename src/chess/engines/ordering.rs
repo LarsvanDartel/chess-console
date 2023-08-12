@@ -6,25 +6,27 @@ use crate::chess::types::Color;
 use super::Engine;
 use super::eval::{PositionEval, MoveEval};
 
-pub struct PruningEngine;
+pub struct OrderingEngine;
 
-impl PruningEngine {
-    fn search<const US: Color, const THEM: Color, PE: PositionEval>(p: &mut Position, depth: usize, alpha: i32, beta: i32) -> i32 {
+impl OrderingEngine {
+    fn search<const US: Color, const THEM: Color, PE: PositionEval, ME: MoveEval>(p: &mut Position, depth: usize, alpha: i32, beta: i32) -> i32 {
         if depth == 0 { return PE::eval::<US, THEM>(p); }
+        
+        let mut moves = p.generate_moves::<US, THEM>().to_vec();
+        moves.sort_unstable_by_key(|&m| -ME::eval::<US, THEM>(p, m));
 
-        let moves = p.generate_moves::<US, THEM>();
         if p.result.is_some() {
             return match p.result.unwrap() {
                 Checkmate(_) => -i32::MAX,
                 _ => 0
             };
         }
-
+        
         let mut best_score = alpha;
-        for i in 0..moves.size {
-            p.make_move::<US>(moves[i]);
-            let score = -Self::search::<THEM, US, PE>(p, depth - 1, -beta, -best_score);
-            p.undo_move::<US>(moves[i]);
+        for m in moves {
+            p.make_move::<US>(m);
+            let score = -Self::search::<THEM, US, PE, ME>(p, depth - 1, -beta, -best_score);
+            p.undo_move::<US>(m);
 
             if score >= beta {
                 return beta;
@@ -37,9 +39,9 @@ impl PruningEngine {
     }
 }
 
-impl Engine for PruningEngine {
+impl Engine for OrderingEngine {
     fn new<const US: Color, const THEM: Color>() -> Self {
-        PruningEngine
+        OrderingEngine
     }
 
     fn best_move<
@@ -48,20 +50,21 @@ impl Engine for PruningEngine {
         >(&mut self, p: &mut Position) -> Move {
         assert!(p.turn == US);
 
-        let moves = p.generate_moves::<US, THEM>();
+        let mut moves = p.generate_moves::<US, THEM>().to_vec();
+        moves.sort_unstable_by_key(|&m| ME::eval::<US, THEM>(p, m));
 
-        if moves.size == 0 { return 0; }
+        if moves.len() == 0 { return 0; }
 
         let mut best_score = -i32::MAX;
         let mut best_move = moves[0];
-        for i in 0..moves.size {
-            p.make_move::<US>(moves[i]);
-            let score = -Self::search::<THEM, US, PE>(p, DEPTH, -i32::MAX, -best_score);
-            p.undo_move::<US>(moves[i]);
-
+        for m in moves {
+            p.make_move::<US>(m);
+            let score = -Self::search::<THEM, US, PE, ME>(p, DEPTH, -i32::MAX, -best_score);
+            p.undo_move::<US>(m);
+    
             if score > best_score {
                 best_score = score;
-                best_move = moves[i];
+                best_move = m;
             }
         }
 

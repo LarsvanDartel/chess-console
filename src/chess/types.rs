@@ -29,6 +29,7 @@ pub const ROOK:   PieceType = 2;
 pub const BISHOP: PieceType = 3;
 pub const KNIGHT: PieceType = 4;
 pub const PAWN:   PieceType = 5;
+pub const PIECE_TYPE_NONE: PieceType = 6;
 
 pub const fn piece_type_from(p: char) -> PieceType {
     match p {
@@ -38,7 +39,7 @@ pub const fn piece_type_from(p: char) -> PieceType {
         'b' | 'B' => BISHOP,
         'n' | 'N' => KNIGHT,
         'p' | 'P' => PAWN,
-        _ => PIECE_NONE
+        _ => PIECE_TYPE_NONE
     }
 }
 
@@ -390,6 +391,16 @@ pub const fn move_is_capture(m: Move) -> bool {
 
 pub const fn move_is_promotion(m: Move) -> bool {
     get_flags(m) & 0b0100 != 0
+}
+
+pub const fn get_promotion_type(m: Move) -> PieceType {
+    match get_flags(m) {
+        PQ_QUEEN | PC_QUEEN => QUEEN,
+        PQ_ROOK | PC_ROOK => ROOK,
+        PQ_BISHOP | PC_BISHOP => BISHOP,
+        PQ_KNIGHT | PC_KNIGHT => KNIGHT,
+        _ => PIECE_TYPE_NONE
+    }
 }
 
 pub fn make<const FLAGS: MoveFlags>(from: Square, to: Bitboard, list: &mut MoveList) {

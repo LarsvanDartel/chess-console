@@ -10,9 +10,9 @@ pub struct MiniMaxEngine;
 
 impl MiniMaxEngine {
     fn search<const US: Color, const THEM: Color, PE: PositionEval>(p: &mut Position, depth: usize) -> i32 {
-        let moves = p.generate_moves::<US, THEM>();
-
         if depth == 0 { return PE::eval::<US, THEM>(p); }
+
+        let moves = p.generate_moves::<US, THEM>();
 
         if p.result.is_some() {
             return match p.result.unwrap() {
