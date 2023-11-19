@@ -5,6 +5,7 @@ pub mod capture;
 pub mod pure_minimax;
 pub mod pruning;
 pub mod ordering;
+pub mod human;
 
 use self::eval::{PositionEval, MoveEval};
 
@@ -13,6 +14,7 @@ pub use capture::CaptureEngine;
 pub use pure_minimax::MiniMaxEngine;
 pub use pruning::PruningEngine;
 pub use ordering::OrderingEngine;
+pub use human::HumanPlayer;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 

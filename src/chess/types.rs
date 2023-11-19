@@ -63,16 +63,16 @@ pub const BLACK_PAWN:   Piece = create_piece(BLACK, PAWN);
     
 pub const PIECE_NONE:   Piece = 14;
 
-pub const PIECE_STR: [&str; N_PIECES] = [
-    "K", "Q", "R", "B", "N", "P", "", "",
-    "k", "q", "r", "b", "n", "p", " "
-];
+//pub const PIECE_STR: [&str; N_PIECES] = [
+//    "K", "Q", "R", "B", "N", "P", "", "",
+//    "k", "q", "r", "b", "n", "p", " "
+//];
 
 // 0x2654 - 0x265F
-//pub const PIECE_STR: [&str; N_PIECES] = [
-//    "♔", "♕", "♖", "♗", "♘", "♙", "", "",
-//    "♚", "♛", "♜", "♝", "♞", "♟", " "
-//];
+pub const PIECE_STR: [&str; N_PIECES] = [
+    "♔", "♕", "♖", "♗", "♘", "♙", "", "",
+    "♚", "♛", "♜", "♝", "♞", "♟", " "
+];
 
 pub const fn create_piece(c: Color, pt: PieceType) -> Piece {
     (c << 3) + pt

@@ -4,13 +4,11 @@ mod chess;
 
 use std::time::Instant;
 
-use chess::engines::RandomEngine;
-use chess::engines::OrderingEngine;
-use chess::engines::eval::MaterialEval;
-use chess::engines::eval::SimpleMoveEval;
 use chess::game::Game;
 use chess::position::GameResult;
 use chess::types::WHITE;
+
+use crate::chess::engines::{HumanPlayer, RandomEngine, MiniMaxEngine, eval::{MaterialEval, SimpleMoveEval}, PruningEngine, OrderingEngine};
 
 fn main() {
     const N_GAMES: usize = 100;
@@ -20,18 +18,19 @@ fn main() {
     let mut n_losses = 0;
 
     let now = Instant::now();
-    for _ in 0..N_GAMES {
+    for i in 0..N_GAMES {
+        println!("{}/{}", i + 1, N_GAMES);
         let game = Game::new();
         match game.start::<
-            OrderingEngine,
-            2,
-            MaterialEval,
-            SimpleMoveEval,
-
-            RandomEngine,
+            HumanPlayer,
             0,
             (),
-            ()
+            (),
+
+            OrderingEngine,
+            7,
+            MaterialEval,
+            SimpleMoveEval,
         >(0) {
             GameResult::Checkmate(color) => {
                 if color == WHITE {
